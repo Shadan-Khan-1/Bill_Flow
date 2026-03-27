@@ -1,25 +1,25 @@
 require('express-async-errors')
 require('dotenv').config()
 
-const express    = require('express')
-const cors       = require('cors')
-const helmet     = require('helmet')
-const morgan     = require('morgan')
-const compression= require('compression')
+const express = require('express')
+const cors = require('cors')
+const helmet = require('helmet')
+const morgan = require('morgan')
+const compression = require('compression')
 const mongoSanitize = require('express-mongo-sanitize')
 // const xssClean   = require('xss-clean')  // uncomment if package installed
 
-const connectDB  = require('./config/db')
-const logger     = require('./utils/logger')
+const connectDB = require('./config/db')
+const logger = require('./utils/logger')
 const { globalErrorHandler, notFound } = require('./middleware/errorHandler')
 const rateLimiter = require('./middleware/rateLimiter')
 
 /* ─── Routes ─── */
-const authRoutes     = require('./routes/auth.routes')
-const productRoutes  = require('./routes/product.routes')
+const authRoutes = require('./routes/auth.routes')
+const productRoutes = require('./routes/product.routes')
 const purchaseRoutes = require('./routes/purchase.routes')
-const salesRoutes    = require('./routes/sales.routes')
-const reportRoutes   = require('./routes/report.routes')
+const salesRoutes = require('./routes/sales.routes')
+const reportRoutes = require('./routes/report.routes')
 
 const app = express()
 
@@ -29,9 +29,9 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc:  ["'self'"],
-      styleSrc:   ["'self'", "'unsafe-inline'"],
-      imgSrc:     ["'self'", "data:"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:"],
     }
   }
 }))
@@ -69,11 +69,11 @@ app.get('/health', (_, res) =>
 )
 
 /* ─── API Routes ─── */
-app.use('/api/auth',      authRoutes)
-app.use('/api/products',  productRoutes)
+app.use('/api/auth', authRoutes)
+app.use('/api/products', productRoutes)
 app.use('/api/purchases', purchaseRoutes)
-app.use('/api/sales',     salesRoutes)
-app.use('/api/reports',   reportRoutes)
+app.use('/api/sales', salesRoutes)
+app.use('/api/reports', reportRoutes)
 
 /* ─── Error Handlers ─── */
 app.use(notFound)
