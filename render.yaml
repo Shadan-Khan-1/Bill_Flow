@@ -1,0 +1,50 @@
+services:
+  # ─── Express API ──────────────────────────────────────
+  - type: web
+    name: billflow-api
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: MONGO_URI
+        fromDatabase:
+          name: billflow-mongo
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: BCRYPT_SALT_ROUNDS
+        value: 12
+      - key: ALLOWED_ORIGINS
+        sync: false         # set manually in Render dashboard
+      - key: LOG_LEVEL
+        value: info
+      - key: RATE_LIMIT_WINDOW_MS
+        value: 900000
+      - key: RATE_LIMIT_MAX
+        value: 100
+      - key: AUTH_RATE_LIMIT_MAX
+        value: 10
+      - key: COMPANY_NAME
+        sync: false
+      - key: COMPANY_GSTIN
+        sync: false
+      - key: COMPANY_STATE
+        value: Maharashtra
+      - key: COMPANY_STATE_CODE
+        value: "27"
+
+databases:
+  - name: billflow-mongo
+    databaseName: billflow
+    plan: free
