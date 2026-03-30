@@ -1,5 +1,5 @@
-const Product          = require('../models/Product.model')
-const { AppError }     = require('../middleware/errorHandler')
+const Product = require('../models/Product.model')
+const { AppError } = require('../middleware/errorHandler')
 const { audit, ACTIONS } = require('../utils/auditLog')
 
 /* ── Helpers ── */
@@ -8,13 +8,13 @@ const buildFilter = (tenantId, query) => {
 
   if (query.search) {
     filter.$or = [
-      { name:     { $regex: query.search, $options: 'i' } },
-      { sku:      { $regex: query.search, $options: 'i' } },
+      { name: { $regex: query.search, $options: 'i' } },
+      { sku: { $regex: query.search, $options: 'i' } },
       { supplier: { $regex: query.search, $options: 'i' } },
     ]
   }
   if (query.category) filter.category = query.category
-  if (query.supplier)  filter.supplier  = { $regex: query.supplier, $options: 'i' }
+  if (query.supplier) filter.supplier = { $regex: query.supplier, $options: 'i' }
   if (query.lowStock === 'true') filter.$expr = { $lte: ['$stock', '$minStock'] }
 
   return filter
@@ -24,7 +24,7 @@ const buildFilter = (tenantId, query) => {
 exports.getAll = async (req, res) => {
   const { page = 1, limit = 20, sortBy = 'createdAt', order = 'desc' } = req.query
   const filter = buildFilter(req.tenantId, req.query)
-  const skip   = (parseInt(page) - 1) * parseInt(limit)
+  const skip = (parseInt(page) - 1) * parseInt(limit)
 
   const [products, total] = await Promise.all([
     Product.find(filter)
@@ -39,7 +39,7 @@ exports.getAll = async (req, res) => {
     status: 'success',
     results: products.length,
     total,
-    page:       parseInt(page),
+    page: parseInt(page),
     totalPages: Math.ceil(total / parseInt(limit)),
     products,
   })
@@ -125,8 +125,8 @@ exports.updateStock = async (req, res) => {
   const product = await Product.findOne({ _id: req.params.id, tenantId: req.tenantId })
   if (!product) throw new AppError('Product not found', 404)
 
-  const before    = product.stock
-  product.stock   = Math.max(0, product.stock + Number(qty))
+  const before = product.stock
+  product.stock = Math.max(0, product.stock + Number(qty))
   await product.save()
 
   audit(ACTIONS.ADJUST_STOCK, 'Product', product._id, req, {

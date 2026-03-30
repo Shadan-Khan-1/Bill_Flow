@@ -1,7 +1,7 @@
-const mongoose        = require('mongoose')
-const { Sale }        = require('../models/Transaction.model')
-const Product         = require('../models/Product.model')
-const { AppError }    = require('../middleware/errorHandler')
+const mongoose = require('mongoose')
+const { Sale } = require('../models/Transaction.model')
+const Product = require('../models/Product.model')
+const { AppError } = require('../middleware/errorHandler')
 const { calcTotals, buildInvoiceNo } = require('../utils/gst')
 const { audit, ACTIONS } = require('../utils/auditLog')
 
@@ -10,12 +10,12 @@ exports.getAll = async (req, res) => {
   const { page = 1, limit = 20, search, status, from, to, sortBy = 'date', order = 'desc' } = req.query
   const filter = { tenantId: req.tenantId }
 
-  if (status)  filter.status = status
-  if (search)  filter['customer.name'] = { $regex: search, $options: 'i' }
+  if (status) filter.status = status
+  if (search) filter['customer.name'] = { $regex: search, $options: 'i' }
   if (from || to) {
     filter.date = {}
     if (from) filter.date.$gte = new Date(from)
-    if (to)   filter.date.$lte = new Date(new Date(to).setHours(23, 59, 59))
+    if (to) filter.date.$lte = new Date(new Date(to).setHours(23, 59, 59))
   }
 
   const skip = (parseInt(page) - 1) * parseInt(limit)
@@ -33,7 +33,7 @@ exports.getAll = async (req, res) => {
     status: 'success',
     results: sales.length,
     total,
-    page:       parseInt(page),
+    page: parseInt(page),
     totalPages: Math.ceil(total / parseInt(limit)),
     sales,
   })

@@ -3,7 +3,7 @@ import toast from 'react-hot-toast'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api',
-  timeout: 10000,
+  // timeout: 60000,
   headers: { 'Content-Type': 'application/json' }
 })
 
@@ -23,7 +23,7 @@ api.interceptors.response.use(
   (error) => {
     if (!error.response) {
       // Network error — queue for offline sync
-      toast.error('You are offline. Changes will sync when connected.')
+      toast.error('You are offline. ')// Changes will sync when connected.
       return Promise.reject(error)
     }
 
