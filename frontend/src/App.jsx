@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard'
 import Products from './pages/Products'
 import Purchases from './pages/Purchases'
 import Sales from './pages/Sales'
+import Sales1 from './pages/Sales1'
 import Reports from './pages/Reports'
 import SettingsPage from './pages/Settings'
 import { useProducts } from './hooks/useProducts'
@@ -35,6 +36,7 @@ function ProtectedLayout() {
             <Route path="/products"  element={<Products />} />
             <Route path="/purchases" element={<Purchases />} />
             <Route path="/sales"     element={<Sales />} />
+            <Route path="/sales1"     element={<Sales1 />} />
             <Route path="/reports"   element={<Reports />} />
             <Route path="/settings"  element={<SettingsPage />} />
             <Route path="*"          element={<Navigate to="/dashboard" replace />} />

@@ -19,6 +19,7 @@ const EMPTY_ITEM = { productId: '', name: '', qty: 1, price: '', gst: 18 }
 
 /* ─── Invoice Print Template ─── */
 function InvoicePrint({ sale }) {
+  const [hoveredRow, setHoveredRow] = useState(null);
   const { subtotal, gstAmt, total } = sale
   return (
     <div style={{ background: '#fff', color: '#1a1a1a', fontFamily: "'DM Sans', sans-serif", padding: 40 }}>
@@ -59,11 +60,30 @@ function InvoicePrint({ sale }) {
 
       {/* Items table */}
 
-      <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 24 }}>
+      <table style={{
+        width: '100%',
+        borderCollapse: 'collapse',
+        marginBottom: 24,
+        border: '1px solid #e2e8f0',
+        borderRadius: 10,
+        overflow: 'hidden',
+      }}>
         <thead>
-          <tr style={{ background: '#f8f9fa' }}>
+          <tr style={{ background: '#f8fafc' }}>
             {['#', 'Description', 'Qty', 'Unit Price (excl. GST)', 'GST %', 'Amount'].map(h => (
-              <th key={h} style={{ padding: '10px 12px', fontSize: 11, textAlign: h === '#' ? 'center' : h === 'Amount' ? 'right' : 'left', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#666' }}>{h}</th>
+              <th key={h} style={{
+                padding: '10px 14px',
+                fontSize: 11,
+                fontWeight: 600,
+                textAlign: h === '#' ? 'center' : h === 'Amount' ? 'right' : 'left',
+                textTransform: 'uppercase',
+                letterSpacing: '0.07em',
+                color: '#64748b',
+                borderBottom: '1px solid #e2e8f0',
+                whiteSpace: 'nowrap',
+              }}>
+                {h}
+              </th>
             ))}
           </tr>
         </thead>
@@ -71,20 +91,55 @@ function InvoicePrint({ sale }) {
           {sale.products.map((p, i) => {
             const lineInc = +p.price * +p.qty
             const base = lineInc / (1 + +p.gst / 100)
+            const unitBase = +p.price / (1 + +p.gst / 100)
+            const isHovered = hoveredRow === i
+
             return (
-              <tr key={i} style={{ borderBottom: '1px solid #f0f0f0' }}>
-                <td style={{ padding: '10px 12px', textAlign: 'center', color: '#aaa', fontSize: 13 }}>{i + 1}</td>
-                <td style={{ padding: '10px 12px', fontWeight: 600, fontSize: 13 }}>{p.name}</td>
-                <td style={{ padding: '10px 12px', fontSize: 13 }}>{p.qty}</td>
-                <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontSize: 13 }}>₹{(+p.price / (1 + +p.gst / 100)).toFixed(2)}</td>
-                <td style={{ padding: '10px 12px', fontSize: 13 }}>{p.gst}%</td>
-                <td style={{ padding: '10px 12px', fontFamily: 'monospace', fontWeight: 700, textAlign: 'right', fontSize: 13 }}>₹{base.toFixed(2)}</td>
+              <tr
+                key={i}
+                onMouseEnter={() => setHoveredRow(i)}
+                onMouseLeave={() => setHoveredRow(null)}
+                style={{
+                  borderBottom: i < sale.products.length - 1 ? '1px solid #f1f5f9' : 'none',
+                  background: isHovered ? '#eff6ff' : 'white',
+                  transition: 'background 0.12s ease',
+                  cursor: 'default',
+                }}
+              >
+                <td style={{ padding: '11px 14px', textAlign: 'center', color: '#94a3b8', fontSize: 13 }}>
+                  {i + 1}
+                </td>
+                <td style={{ padding: '11px 14px', fontWeight: 600, fontSize: 13, color: '#0f172a' }}>
+                  {p.name}
+                </td>
+                <td style={{ padding: '11px 14px', fontSize: 13, textAlign: 'center', color: '#64748b' }}>
+                  {p.qty}
+                </td>
+                <td style={{ padding: '11px 14px', fontFamily: 'monospace', fontSize: 13, textAlign: 'right', color: '#0f172a' }}>
+                  ₹{unitBase.toFixed(2)}
+                </td>
+                <td style={{ padding: '11px 14px', fontSize: 13, textAlign: 'center' }}>
+                  <span style={{
+                    display: 'inline-block',
+                    background: '#f1f5f9',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: 20,
+                    padding: '2px 8px',
+                    fontSize: 11,
+                    fontWeight: 600,
+                    color: '#0f172a',
+                  }}>
+                    {p.gst}%
+                  </span>
+                </td>
+                <td style={{ padding: '11px 14px', fontFamily: 'monospace', fontWeight: 700, textAlign: 'right', fontSize: 13, color: '#0f172a' }}>
+                  ₹{base.toFixed(2)}
+                </td>
               </tr>
             )
           })}
         </tbody>
       </table>
-
       {/* Totals */}
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 28 }}>
         <div style={{ minWidth: 270, background: '#f8f9fa', borderRadius: 10, padding: '16px 20px' }}>

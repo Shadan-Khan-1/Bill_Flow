@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { to: '/products',  label: 'Products',   icon: Package },
   { to: '/purchases', label: 'Purchases',  icon: ShoppingCart },
   { to: '/sales',     label: 'Sales & Billing', icon: Receipt },
+  { to: '/sales1',     label: 'Sales', icon: Receipt },
   { to: '/reports',   label: 'Reports',    icon: BarChart3 },
   { to: '/settings',  label: 'Settings',   icon: Settings },
 ]
