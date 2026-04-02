@@ -80,7 +80,7 @@ app.use(notFound)
 app.use(globalErrorHandler)
 
 /* ─── Start ─── */
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 6000
 
 connectDB().then(() => {
   app.listen(PORT, () => {

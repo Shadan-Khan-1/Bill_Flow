@@ -156,7 +156,7 @@ export default function LoginPage() {
         </div>
 
         <p style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: 12, marginTop: 20 }}>
-          © 2025 BillFlow · <span style={{ color: 'var(--accent)' }}>v2.4.1</span>
+          © 2026 BillFlow · <span style={{ color: 'var(--accent)' }}>v2.4.1</span>
         </p>
       </div>
     </div>

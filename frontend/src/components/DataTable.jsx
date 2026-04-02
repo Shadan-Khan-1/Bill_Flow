@@ -1,33 +1,73 @@
 import { useState, useMemo } from 'react'
 import { Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
 
+/* Resolve a dot-notation path against an object.
+   e.g. getNestedValue(row, 'customer.name') → row.customer.name */
+function getNestedValue(obj, path) {
+  return path.split('.').reduce((acc, key) => acc?.[key], obj)
+}
+
+/* Collect all searchable text from a row for a given key.
+   Handles: flat keys, dot paths, and arrays of objects. */
+function getSearchText(row, key) {
+  // debugger
+  // dot-notation: 'customer.name' → row.customer.name
+  if (key.includes('.')) {
+    return String(getNestedValue(row, key) ?? '')
+  }
+
+  const val = row[key]
+
+  // Array of objects (e.g. products) → join all string values inside
+  if (Array.isArray(val)) {
+    return val
+      .map(item =>
+        typeof item === 'object' && item !== null
+          ? Object.values(item).join(' ')
+          : String(item)
+      )
+      .join(' ')
+  }
+
+  // Plain object (e.g. customer) → join all its string values
+  if (typeof val === 'object' && val !== null) {
+    return Object.values(val).join(' ')
+  }
+
+  return String(val ?? '')
+}
+
 export default function DataTable({
   columns,
   data = [],
   searchable = true,
   searchKeys = [],
-  pageSize = 10,
+  pageSize = 50,
   emptyMessage = 'No records found',
   loading = false,
 }) {
-  const [search, setSearch]   = useState('')
-  const [page, setPage]       = useState(1)
+  const [search, setSearch] = useState('')
+  const [page, setPage] = useState(1)
   const [sortKey, setSortKey] = useState(null)
   const [sortDir, setSortDir] = useState('asc')
 
   const filtered = useMemo(() => {
+    // debugger
     let rows = [...data]
-
-    if (search && searchKeys.length) {
-      const q = search.toLowerCase()
+   
+    if (search.trim() && searchKeys.length) {
+      const q = search.toLowerCase().trim()
       rows = rows.filter(row =>
-        searchKeys.some(k => String(row[k] ?? '').toLowerCase().includes(q))
+        searchKeys.some(k =>
+          getSearchText(row, k).toLowerCase().includes(q)
+        )
       )
     }
 
     if (sortKey) {
       rows.sort((a, b) => {
-        const av = a[sortKey], bv = b[sortKey]
+        const av = getNestedValue(a, sortKey) ?? a[sortKey]
+        const bv = getNestedValue(b, sortKey) ?? b[sortKey]
         return sortDir === 'asc'
           ? String(av).localeCompare(String(bv), undefined, { numeric: true })
           : String(bv).localeCompare(String(av), undefined, { numeric: true })
@@ -38,7 +78,7 @@ export default function DataTable({
   }, [data, search, sortKey, sortDir, searchKeys])
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize))
-  const paginated  = filtered.slice((page - 1) * pageSize, page * pageSize)
+  const paginated = filtered.slice((page - 1) * pageSize, page * pageSize)
 
   const handleSort = (key) => {
     if (!key) return
@@ -66,7 +106,7 @@ export default function DataTable({
             <tr>
               {columns.map(col => (
                 <th
-                  key={col.key}
+                  key={col.key + col.label}
                   onClick={() => col.sortable !== false && handleSort(col.key)}
                   style={{ cursor: col.sortable !== false ? 'pointer' : 'default', userSelect: 'none' }}
                 >
@@ -96,7 +136,7 @@ export default function DataTable({
               paginated.map((row, i) => (
                 <tr key={row._id || row.id || i}>
                   {columns.map(col => (
-                    <td key={col.key}>
+                    <td key={col.key + col.label}>
                       {col.render ? col.render(row[col.key], row) : row[col.key]}
                     </td>
                   ))}
@@ -107,7 +147,6 @@ export default function DataTable({
         </table>
       </div>
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 14, padding: '0 4px' }}>
           <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
@@ -115,10 +154,10 @@ export default function DataTable({
           </span>
           <div style={{ display: 'flex', gap: 4 }}>
             {[
-              { icon: ChevronsLeft,  action: () => setPage(1),           disabled: page === 1 },
-              { icon: ChevronLeft,   action: () => setPage(p => p - 1),  disabled: page === 1 },
-              { icon: ChevronRight,  action: () => setPage(p => p + 1),  disabled: page === totalPages },
-              { icon: ChevronsRight, action: () => setPage(totalPages),  disabled: page === totalPages },
+              { icon: ChevronsLeft, action: () => setPage(1), disabled: page === 1 },
+              { icon: ChevronLeft, action: () => setPage(p => p - 1), disabled: page === 1 },
+              { icon: ChevronRight, action: () => setPage(p => p + 1), disabled: page === totalPages },
+              { icon: ChevronsRight, action: () => setPage(totalPages), disabled: page === totalPages },
             ].map(({ icon: Icon, action, disabled }, i) => (
               <button key={i} className="btn btn-icon" onClick={action} disabled={disabled}
                 style={{ width: 28, height: 28, opacity: disabled ? 0.35 : 1 }}>

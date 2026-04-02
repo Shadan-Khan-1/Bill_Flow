@@ -5,13 +5,14 @@ import { getFromDB, saveToDB } from '../utils/indexedDB'
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
+  const stored = localStorage.getItem('bf_user')
+  const [user, setUser] = useState(JSON.parse(stored))
   const [loading, setLoading] = useState(true)
 
   /* Restore session from localStorage on mount */
   useEffect(() => {
     const token = localStorage.getItem('bf_token')
-    const stored = localStorage.getItem('bf_user')
+    // const stored = localStorage.getItem('bf_user')
     if (token && stored) {
       try {
         api.defaults.headers.common['Authorization'] = `Bearer ${token}`

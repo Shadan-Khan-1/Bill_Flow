@@ -43,7 +43,7 @@ export default function Sidebar({ open, onClose }) {
             </div>
             <div>
               <div className="font-syne" style={{ fontSize: 17, fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.3px' }}>
-                BillFlow
+                Simon
               </div>
               <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
                 Business Suite
@@ -75,7 +75,7 @@ export default function Sidebar({ open, onClose }) {
 
         {/* User Panel */}
         <div style={{ padding: '12px', borderTop: '1px solid var(--border)' }}>
-          <div style={{
+          {/* <div style={{
             display: 'flex', alignItems: 'center', gap: 10,
             padding: '10px', borderRadius: 10,
             background: 'var(--bg-hover)', border: '1px solid var(--border)',
@@ -97,7 +97,7 @@ export default function Sidebar({ open, onClose }) {
                 {user?.role}
               </span>
             </div>
-          </div>
+          </div> */}
           <button
             className="btn btn-ghost"
             onClick={logout}

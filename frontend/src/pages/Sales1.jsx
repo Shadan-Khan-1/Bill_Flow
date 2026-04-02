@@ -110,15 +110,15 @@ function InvoicePrint({ sale }) {
 }
 
 export default function Sales() {
-  const [sales,        setSales]   = useState([])
-  const [products,     setProducts]= useState([])
-  const [modal,        setModal]   = useState(false)
-  const [invoiceModal, setInv]     = useState(null)
-  const [form,         setForm]    = useState(EMPTY_FORM)
-  const [items,        setItems]   = useState([{ ...EMPTY_ITEM }])
-  const [saving,       setSaving]  = useState(false)
-  const [loading,      setLoading] = useState(true)
-  const [error,        setError]   = useState(null)
+  const [sales, setSales] = useState([])
+  const [products, setProducts] = useState([])
+  const [modal, setModal] = useState(false)
+  const [invoiceModal, setInv] = useState(null)
+  const [form, setForm] = useState(EMPTY_FORM)
+  const [items, setItems] = useState([{ ...EMPTY_ITEM }])
+  const [saving, setSaving] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const printRef = useRef()
 
   const set = (k) => (e) => setForm(f => ({ ...f, [k]: e.target.value }))
@@ -132,6 +132,7 @@ export default function Sales() {
           salesService.getAll(),
           productsService.getAll(),
         ])
+        // debugger
         setSales(salesRes.data?.sales || [])
         setProducts(productsRes.data?.products || [])
       } catch (err) {
@@ -157,7 +158,7 @@ export default function Sales() {
     })
   }
 
-  const addItem    = () => setItems(i => [...i, { ...EMPTY_ITEM }])
+  const addItem = () => setItems(i => [...i, { ...EMPTY_ITEM }])
   const removeItem = (i) => setItems(prev => prev.filter((_, idx) => idx !== i))
 
   const grandTotal = calcTotal(items)
@@ -175,25 +176,25 @@ export default function Sales() {
     setSaving(true)
     try {
       const payload = {
-        customer:    { name: form.customerName, phone: form.customerPhone },
-        date:        form.date,
+        customer: { name: form.customerName, phone: form.customerPhone },
+        date: form.date,
         paymentMode: form.paymentMode,
-        total:       grandTotal,
-        subtotal:    grandTotal,
-        gstAmt:      0,
+        total: grandTotal,
+        subtotal: grandTotal,
+        gstAmt: 0,
         products: items.map(it => ({
           productId: it.productId,
-          name:      it.name,
-          qty:       +it.qty,
-          price:     +it.price,
+          name: it.name,
+          qty: +it.qty,
+          price: +it.price,
         })),
       }
 
       const res = await salesService.create(payload)
       const newSale = res.data?.sale || {
-        _id:       Date.now().toString(),
+        _id: Date.now().toString(),
         invoiceNo: `INV-${String(sales.length + 1).padStart(3, '0')}`,
-        status:    'paid',
+        status: 'paid',
         ...payload,
       }
 
@@ -301,7 +302,11 @@ export default function Sales() {
 
       <div className="card card-flush">
         {sales.length > 0
-          ? <DataTable columns={columns} data={sales} searchKeys={['invoiceNo']} />
+          ? <DataTable
+            columns={columns}
+            data={sales}
+            searchKeys={['invoiceNo', 'customer', 'products', 'date']}
+          />
           : (
             <div style={{ textAlign: 'center', padding: '48px 20px', color: 'var(--text-muted)' }}>
               <Receipt size={36} style={{ marginBottom: 12, opacity: 0.3, display: 'block', margin: '0 auto 14px' }} />
@@ -420,7 +425,7 @@ export default function Sales() {
 // const EMPTY_FORM = { customerName: '', customerPhone: '', customerGst: '', date: today(), paymentMode: 'Cash' }
 // const EMPTY_ITEM = {
 //     productId: '', name: '', qty: 1, price: '',
-//     // gst: 18 
+//     // gst: 18
 // }
 
 // /* ─── Invoice Print Template ─── */
@@ -686,7 +691,7 @@ export default function Sales() {
 //                 invoiceNo: `INV-${sales.length + 1}`,
 //                 customer: {
 //                     name: form.customerName, phone: form.customerPhone,
-//                     //  gst: form.customerGst 
+//                     //  gst: form.customerGst
 //                 },
 //                 status: 'paid'
 //             }

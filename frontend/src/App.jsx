@@ -19,7 +19,7 @@ function ProtectedLayout() {
   const { user } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const { lowStockProducts } = useProducts()
-
+  // debugger
   if (!user) return <Navigate to="/login" replace />
 
   return (
@@ -33,13 +33,13 @@ function ProtectedLayout() {
         <main className="page-content">
           <Routes>
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/products"  element={<Products />} />
+            <Route path="/products" element={<Products />} />
             <Route path="/purchases" element={<Purchases />} />
-            <Route path="/sales"     element={<Sales />} />
-            <Route path="/sales1"     element={<Sales1 />} />
-            <Route path="/reports"   element={<Reports />} />
-            <Route path="/settings"  element={<SettingsPage />} />
-            <Route path="*"          element={<Navigate to="/dashboard" replace />} />
+            <Route path="/sales" element={<Sales />} />
+            <Route path="/sales1" element={<Sales1 />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </main>
       </div>
@@ -63,12 +63,12 @@ export default function App() {
                 fontSize: 13,
               },
               success: { iconTheme: { primary: '#10b981', secondary: '#fff' } },
-              error:   { iconTheme: { primary: '#ef4444', secondary: '#fff' } },
+              error: { iconTheme: { primary: '#ef4444', secondary: '#fff' } },
             }}
           />
           <Routes>
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/*"     element={<ProtectedLayout />} />
+            <Route path="/*" element={<ProtectedLayout />} />
           </Routes>
         </AuthProvider>
       </ThemeProvider>
